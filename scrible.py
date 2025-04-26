@@ -11,6 +11,20 @@ WIDTH, HEIGHT = 1920, 1080
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Drawing Guessing Game")
 
+# Load tool icons
+try:
+    brush_icon = pygame.image.load('brush.png').convert_alpha()
+    eraser_icon = pygame.image.load('eraser.png').convert_alpha()
+    fill_icon = pygame.image.load('fill.png').convert_alpha()
+    # Resize icons to 60x60 pixels
+    brush_icon = pygame.transform.scale(brush_icon, (60, 60))
+    eraser_icon = pygame.transform.scale(eraser_icon, (60, 60))
+    fill_icon = pygame.transform.scale(fill_icon, (60, 60))
+except FileNotFoundError as e:
+    print(f"Error loading icon files: {e}")
+    pygame.quit()
+    exit()
+
 # Colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -66,51 +80,36 @@ class Button:
             pygame.draw.rect(surface, BLACK, self.rect.inflate(4, 4), 3, border_radius=10)
         pygame.draw.rect(surface, self.color, self.rect, border_radius=10)
         
-        # Draw icon or text
+        # Draw icon if available
         if self.icon:
-            self.draw_icon(surface)
+            icon_rect = self.icon.get_rect(center=self.rect.center)
+            surface.blit(self.icon, icon_rect)
         else:
             font = pygame.font.SysFont('Arial', 20)
             text_surf = font.render(self.text, True, self.text_color)
             text_rect = text_surf.get_rect(center=self.rect.center)
             surface.blit(text_surf, text_rect)
-    
-    def draw_icon(self, surface):
-        if self.text == "brush":
-            # Brush icon
-            center = self.rect.center
-            pygame.draw.circle(surface, BLACK, center, 8, 2)
-            pygame.draw.line(surface, BLACK, (center[0]-10, center[1]), 
-                           (center[0]+10, center[1]), 2)
-        elif self.text == "eraser":
-            # Eraser icon
-            pygame.draw.rect(surface, BLACK, self.rect.inflate(-10, -10), 2)
-        elif self.text == "fill":
-            # Bucket icon
-            center = self.rect.center
-            pygame.draw.rect(surface, BLACK, (center[0]-10, center[1]-5, 20, 10), 2)
-            pygame.draw.line(surface, BLACK, (center[0], center[1]-5), 
-                           (center[0], center[1]-15), 2)
 
 def create_tools():
     tools = []
     y = 50
-    # Brush button
+    
+    # Tool buttons with icons
     tools.append(Button(
-        pygame.Rect(WIDTH - TOOLBAR_WIDTH + 10, y, 80, 80),
-        "brush", BG_COLOR, BLACK, True, True
+        pygame.Rect(WIDTH - TOOLBAR_WIDTH + 20, y, 80, 80),
+        "brush", BG_COLOR, BLACK, True, brush_icon
     ))
     y += 100
-    # Eraser button
+    
     tools.append(Button(
-        pygame.Rect(WIDTH - TOOLBAR_WIDTH + 10, y, 80, 80),
-        "eraser", BG_COLOR, BLACK, True, True
+        pygame.Rect(WIDTH - TOOLBAR_WIDTH + 20, y, 80, 80),
+        "eraser", BG_COLOR, BLACK, True, eraser_icon
     ))
     y += 100
-    # Fill button
+    
     tools.append(Button(
-        pygame.Rect(WIDTH - TOOLBAR_WIDTH + 10, y, 80, 80),
-        "fill", BG_COLOR, BLACK, True, True
+        pygame.Rect(WIDTH - TOOLBAR_WIDTH + 20, y, 80, 80),
+        "fill", BG_COLOR, BLACK, True, fill_icon
     ))
     y += 150
     
@@ -167,14 +166,12 @@ def scanline_fill(surface, start_pos, new_color):
         while x < w and surface.get_at((x, y)) == old_color:
             surface.set_at((x, y), new_color)
             
-            # Check pixels above
             if not span_above and y > 0 and surface.get_at((x, y-1)) == old_color:
                 stack.append((x, y-1))
                 span_above = True
             elif span_above and y > 0 and surface.get_at((x, y-1)) != old_color:
                 span_above = False
                 
-            # Check pixels below
             if not span_below and y < h-1 and surface.get_at((x, y+1)) == old_color:
                 stack.append((x, y+1))
                 span_below = True
@@ -189,13 +186,11 @@ def handle_drawing(event):
     
     if event.type == MOUSEBUTTONDOWN and event.button == 1:
         x, y = event.pos
-        # Check tool buttons first
         for btn in tools:
             if btn.rect.collidepoint(x, y):
                 handle_tool_click(btn)
                 return
                 
-        # Handle actual drawing
         if canvas.get_rect(topleft=(20, 20)).collidepoint(x-20, y-20):
             save_state()
             if tool == "fill":
@@ -222,7 +217,6 @@ def handle_drawing(event):
 def handle_tool_click(btn):
     global current_brush_size, tool, brush_color, fill_color
     
-    # Deactivate all tools first
     for t in tools:
         if t.is_tool:
             t.active = False
@@ -248,7 +242,6 @@ def handle_tool_click(btn):
         current_brush_size = int(btn.text)
         btn.active = True
     elif btn.color in COLORS:
-        # Update color based on active tool
         if tool == "fill":
             fill_color = btn.color
         else:
@@ -277,19 +270,11 @@ while running:
         btn.draw(screen)
     
     # Draw status indicators
-    # Current colors
     pygame.draw.rect(screen, BLACK, (WIDTH-180, HEIGHT-280, 60, 60))
     pygame.draw.rect(screen, brush_color, (WIDTH-175, HEIGHT-275, 50, 50))
     pygame.draw.rect(screen, BLACK, (WIDTH-110, HEIGHT-280, 60, 60))
     pygame.draw.rect(screen, fill_color, (WIDTH-105, HEIGHT-275, 50, 50))
     
-    # Status text
-    color_text = status_font.render("Brush", True, BLACK)
-    screen.blit(color_text, (WIDTH-180, HEIGHT-310))
-    color_text = status_font.render("Fill", True, BLACK)
-    screen.blit(color_text, (WIDTH-110, HEIGHT-310))
-    
-    # Brush size
     size_text = status_font.render(f"Size: {current_brush_size}", True, BLACK)
     screen.blit(size_text, (WIDTH-180, HEIGHT-200))
     
@@ -299,35 +284,25 @@ while running:
             running = False
         handle_drawing(event)
     
-    # Draw mouse indicator
+    # Draw cursor circle
     mouse_pos = pygame.mouse.get_pos()
     canvas_rect = pygame.Rect(20, 20, 1600, 900)
     if canvas_rect.collidepoint(mouse_pos):
+        radius = current_brush_size // 2
         if tool == "eraser":
-            indicator_color = RED
+            color = RED
         elif tool == "fill":
-            indicator_color = fill_color
+            color = fill_color
         else:
-            indicator_color = brush_color
-            
-        if tool == "fill":
-            # Fill bucket icon
-            bucket_rect = pygame.Rect(mouse_pos[0]-15, mouse_pos[1]-15, 30, 30)
-            pygame.draw.rect(screen, indicator_color, bucket_rect, 2)
-            pygame.draw.line(screen, indicator_color, 
-                           (mouse_pos[0]-10, mouse_pos[1]+5),
-                           (mouse_pos[0]+10, mouse_pos[1]+5), 2)
-        else:
-            # Brush/eraser circle
-            radius = current_brush_size // 2
-            pygame.draw.circle(screen, indicator_color, mouse_pos, radius, 2)
-            pygame.draw.line(screen, indicator_color, 
-                           (mouse_pos[0]-radius-5, mouse_pos[1]),
-                           (mouse_pos[0]+radius+5, mouse_pos[1]), 1)
-            pygame.draw.line(screen, indicator_color, 
-                           (mouse_pos[0], mouse_pos[1]-radius-5),
-                           (mouse_pos[0], mouse_pos[1]+radius+5), 1)
-    
+            color = brush_color
+        
+        # Draw transparent circle
+        cursor_surface = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
+        pygame.draw.circle(cursor_surface, (*color, 100), (radius, radius), radius)
+        screen.blit(cursor_surface, (mouse_pos[0]-radius, mouse_pos[1]-radius))
+        # Draw outline
+        pygame.draw.circle(screen, color, mouse_pos, radius, 2)
+
     pygame.display.flip()
     clock.tick(60)
 
