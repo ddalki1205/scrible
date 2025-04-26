@@ -19,7 +19,7 @@ def main():
     try:
         pygame.init()
         screen = pygame.display.set_mode((INITIAL_WIDTH, INITIAL_HEIGHT), RESIZABLE)
-        pygame.display.set_caption("Drawing Guessing Game")
+        pygame.display.set_caption("Group 6 Scribbl.io")
         
         # Initialize components
         tool_state = ToolState()
