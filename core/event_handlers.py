@@ -17,7 +17,6 @@ def handle_resize_event(event, screen, current_size, tools, canvas_area, handle_
     
     return current_size, tools, canvas_area
     
-    return current_size, tools, canvas_area
 def handle_brush_size_click(item, mouse_pos, tool_state):
     btn = item['button']
     
