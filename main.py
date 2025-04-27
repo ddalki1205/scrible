@@ -113,7 +113,7 @@ def main():
                     mouse_pos = event.pos
                     for item in tools:
                         btn = item['button']
-                        if item['type'] in ['tool', 'brush_size', 'action']:  # Added 'action'
+                        if item['type'] in ['tool', 'brush_size', 'action']:  
                             btn.is_hovered = btn.original_rect.collidepoint(mouse_pos)
                     
                     if drawing:

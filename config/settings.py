@@ -70,10 +70,10 @@ TOOL_BUTTON_BG = (255, 255, 255)  # White background
 TOOL_SELECTED_COLOR = (128, 0, 128)  # Purple (#800080)
 
 # Animation Settings
-HOVER_ANIM_DURATION = 0.2  # seconds
-HOVER_FLOAT_OFFSET = -5     # pixels (negative for upward float)
-HOVER_COLOR = (230, 230, 230)  # Light gray hover color
-HOVER_EASING = "ease_out_quad"  # or "linear" 
+HOVER_ANIM_DURATION = 0.2           # seconds
+HOVER_FLOAT_OFFSET = -5             # pixels (negative for upward float)
+HOVER_COLOR = (230, 230, 230)       # Light gray hover color
+HOVER_EASING = "ease_out_quad"      # or "linear" 
 
 # Action Buttons
 ACTION_BUTTON_WIDTH = 80

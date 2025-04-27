@@ -1,4 +1,3 @@
-# ui/components.py
 import pygame
 from config.settings import (
     BG_COLOR,
