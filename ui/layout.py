@@ -1,11 +1,8 @@
-# ui/layout.py
 import pygame
 from ui.components import Button
 from config.settings import (
-    # Add these new imports
     TOOL_BUTTON_BG,
     TOOL_SELECTED_COLOR,
-    # Keep existing imports
     COLOR_BUTTON_SIZE, COLOR_BUTTON_SPACING, COLOR_ROWS, COLORS_PER_ROW,
     PALETTE_BOTTOM_MARGIN, PALETTE_VERTICAL_SPACING, TOOL_BUTTON_SIZE,
     TOOL_SPACING, BRUSH_SIZE_BUTTON_SIZE, PALETTE_TOOL_PADDING,
