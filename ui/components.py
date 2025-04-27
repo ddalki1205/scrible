@@ -140,7 +140,8 @@ class Button:
             center_with_offset,
             self.current_size // 2
         )
-        # Animated dropdown indicator
+        #dropdown arrow indicator
+        """
         points = [
             (self.rect.right - 15, center_with_offset[1] - 5),
             (self.rect.right - 10, center_with_offset[1] + 5),
@@ -148,6 +149,8 @@ class Button:
         ]
         pygame.draw.polygon(surface, (0, 0, 0), points)
 
+        """
+        
     def _draw_icon(self, surface):
         if self.icon:
             # Apply offset to all icons except brush size
