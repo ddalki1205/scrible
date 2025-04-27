@@ -58,7 +58,7 @@ def main():
             # Update animations
             for item in tools:
                 btn = item['button']
-                if item['type'] in ['tool', 'brush_size']:
+                if item['type'] in ['tool', 'brush_size', 'action']:
                     btn.update(dt)
 
             # Handle events

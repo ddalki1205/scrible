@@ -4,8 +4,8 @@ from config.settings import TOOL_ICON_SIZE, COLORS
 
 def draw_enhanced_cursor(screen, tool_state, mouse_pos, icons):
     """Draw tool-specific cursor with consistent icon positioning"""
-    cursor_x_offset = -4
-    cursor_y_offset = -50
+    cursor_x_offset = -13
+    cursor_y_offset = -70
     icon_size = TOOL_ICON_SIZE[0]  # Assuming square icons
     
     # For fill tool
