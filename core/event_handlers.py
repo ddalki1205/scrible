@@ -61,7 +61,7 @@ def handle_mouse_down(event, tools, tool_state, canvas_manager, canvas_area):
         if tool_state.active_tool in ['brush', 'eraser']:
             x = int((mouse_pos[0] - canvas_area.left) * CANVAS_SIZE[0] / canvas_area.width)
             y = int((mouse_pos[1] - canvas_area.top) * CANVAS_SIZE[1] / canvas_area.height)
-            color = tool_state.brush_color if tool_state.active_tool == 'brush' else COLORS[1]
+            color = tool_state.brush_color if tool_state.active_tool == 'brush' else COLORS[0]
             pygame.draw.circle(
                 canvas_manager.surface,
                 color,
@@ -115,7 +115,7 @@ def handle_mouse_motion(event, drawing, tool_state, canvas_manager, canvas_area)
     y = int((mouse_pos[1] - canvas_area.top) * CANVAS_SIZE[1] / canvas_area.height)
     
     if tool_state.last_pos:
-        color = tool_state.brush_color if tool_state.active_tool == 'brush' else COLORS[1]
+        color = tool_state.brush_color if tool_state.active_tool == 'brush' else COLORS[0]
         radius = tool_state.brush_size // 2
         
         # Calculate distance between points

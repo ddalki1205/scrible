@@ -6,7 +6,7 @@ from config.settings import CANVAS_SIZE, COLORS
 class CanvasManager:
     def __init__(self):
         self.surface = pygame.Surface(CANVAS_SIZE, pygame.SRCALPHA)
-        self.surface.fill(COLORS[1])
+        self.surface.fill(COLORS[0])
         self.undo_stack = deque(maxlen=20)
         self.redo_stack = deque(maxlen=20)
         self.save_state()
@@ -39,7 +39,7 @@ class CanvasManager:
     def clear(self):
         """Clear canvas while preserving history"""
         self.save_state()
-        self.surface.fill(COLORS[1])
+        self.surface.fill(COLORS[0])
 
     def get_scaled(self, target_size):
         """Return scaled version of canvas"""
