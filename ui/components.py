@@ -36,21 +36,24 @@ class Button:
         self.is_tool = kwargs.get('is_tool', False)
         self.is_color = kwargs.get('is_color', False)
         self.is_brush_size = kwargs.get('is_brush_size', False)
+        self.is_action = kwargs.get('is_action', False)
         self.current_size = kwargs.get('current_size', BRUSH_SIZES[0])
         self.dropdown_open = False
         self.dropdown_rects = []
         self.hovered_size = None
         self.font = pygame.font.SysFont('Arial', 20)
+        self.hover_color = kwargs.get('hover_color', HOVER_COLOR)
+        self.float_offset = kwargs.get('float_offset', HOVER_FLOAT_OFFSET)
         
         # Animation properties
         self.hover_progress = 0.0
         self.is_hovered = False
         self.animation_time = 0.0
         self.current_color = self.color
-        self.icon_offset = 0  # Tracks icon position animation
+        self.icon_offset = 0
 
     def update(self, dt):
-        target_progress = 1.0 if self.is_hovered else 0.0
+        # Update animation time
         self.animation_time += dt * (1.0 if self.is_hovered else -1.0)
         self.animation_time = max(0.0, min(self.animation_time, HOVER_ANIM_DURATION))
         
@@ -61,27 +64,25 @@ class Button:
         else:  # linear
             self.hover_progress = t
 
-        # Update icon offset
-        self.icon_offset = HOVER_FLOAT_OFFSET * self.hover_progress
-
-        # Update color (only for non-selected tools)
-        if not self.active and self.is_tool:
+        # Update visual properties
+        self.icon_offset = self.float_offset * self.hover_progress
+        
+        # Color transition for interactive buttons
+        if not self.active and (self.is_tool or self.is_action):
             base_color = TOOL_BUTTON_BG
             self.current_color = [
-                base + (HOVER_COLOR[i] - base) * self.hover_progress
+                base + (self.hover_color[i] - base) * self.hover_progress
                 for i, base in enumerate(base_color)
             ]
-        else:
-            self.current_color = self.color
 
     def draw(self, surface):
         # Determine background color
-        if self.is_tool and self.active:
+        if (self.is_tool or self.is_action) and self.active:
             bg_color = TOOL_SELECTED_COLOR
         else:
             bg_color = self.current_color
         
-        # Draw button background (static position)
+        # Draw button background
         pygame.draw.rect(surface, bg_color, self.rect, border_radius=5)
         
         # Color selection indicator
@@ -92,7 +93,6 @@ class Button:
                 (self.rect.left + COLOR_INDICATOR_PADDING, self.rect.bottom - COLOR_INDICATOR_PADDING),
                 (self.rect.right - COLOR_INDICATOR_PADDING, self.rect.bottom - COLOR_INDICATOR_PADDING)
             ]
-            
             for i, corner in enumerate(corners):
                 rect = pygame.Rect(
                     corner[0] - COLOR_INDICATOR_RADIUS,
@@ -118,10 +118,12 @@ class Button:
         if self.dropdown_open and self.is_brush_size:
             self._draw_brush_sizes(surface)
 
-        # Draw icon or text with animation offset
+        # Draw icon with animation
         if self.icon:
-            self._draw_icon(surface)
-        elif self.text and not self.is_brush_size:
+            center = (self.rect.centerx, self.rect.centery + self.icon_offset)
+            icon_rect = self.icon.get_rect(center=center)
+            surface.blit(self.icon, icon_rect)
+        elif self.text:
             self._draw_text(surface)
 
 

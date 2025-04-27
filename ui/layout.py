@@ -10,9 +10,8 @@ from config.settings import (
     PALETTE_BOTTOM_MARGIN, PALETTE_VERTICAL_SPACING, TOOL_BUTTON_SIZE,
     TOOL_SPACING, BRUSH_SIZE_BUTTON_SIZE, PALETTE_TOOL_PADDING,
     ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, ACTION_BUTTON_SPACING,
-    ACTION_RIGHT_MARGIN, CANVAS_MARGIN,
-    TOOL_BUTTON_RADIUS, BUTTON_HIGHLIGHT_COLOR,
-    COLORS, ICON_PATHS, BRUSH_SIZES
+    ACTION_RIGHT_MARGIN, CANVAS_MARGIN, HOVER_FLOAT_OFFSET,
+    TOOL_BUTTON_RADIUS, COLORS, BRUSH_SIZES, HOVER_COLOR
 )
 
 def create_tools(window_size, icons):
@@ -107,23 +106,29 @@ def create_tools(window_size, icons):
     # Action Buttons (top right)
     action_x = win_w - ACTION_BUTTON_WIDTH - ACTION_RIGHT_MARGIN
     action_y = CANVAS_MARGIN
-    
+
     actions = ['undo', 'redo', 'clear']
     for i, action in enumerate(actions):
+        btn_rect = pygame.Rect(
+            action_x,
+            action_y + i * (ACTION_BUTTON_HEIGHT + ACTION_BUTTON_SPACING),
+            ACTION_BUTTON_WIDTH,
+            ACTION_BUTTON_HEIGHT
+        )
+        
         tools.append({
             'type': 'action',
             'name': action,
             'button': Button(
-                pygame.Rect(
-                    action_x,
-                    action_y + i*(ACTION_BUTTON_HEIGHT + ACTION_BUTTON_SPACING),
-                    ACTION_BUTTON_WIDTH,
-                    ACTION_BUTTON_HEIGHT
-                ),
-                text=action.capitalize(),
-                color=(255, 100, 100) if action == 'clear' else BUTTON_HIGHLIGHT_COLOR,
-                border_radius=TOOL_BUTTON_RADIUS
+                btn_rect,
+                icon=icons[action],
+                is_tool=True,       # Enables animations
+                is_action=True,     # Special type
+                color=TOOL_BUTTON_BG,
+                hover_color=HOVER_COLOR,
+                float_offset=HOVER_FLOAT_OFFSET,
+                border_radius=5
             )
         })
-
+    
     return tools
